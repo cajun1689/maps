@@ -17,7 +17,7 @@
 
     async function fetchFoodTruckLocations() {
         try {
-            const city = "Casper";
+            const City = "Casper";
             const apiUrl = `https://ff3d4knxkd.execute-api.us-east-1.amazonaws.com/prod/recent-trucks?city=${city}`;
 
             const response = await fetch(apiUrl);
