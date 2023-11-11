@@ -16,26 +16,37 @@ function initMap() {
 
 async function fetchFoodTruckLocations() {
     try {
-        const city = "casper";
+        const city = "Casper";
         const apiUrl = `https://ff3d4knxkd.execute-api.us-east-1.amazonaws.com/prod/recent-trucks?city=${city}`;
 
         const response = await fetch(apiUrl);
         const result = await response.json();
 
-        console.log("Response:", result); // Log the raw response
+        console.log("Raw response:", result); // Log the raw response
 
         if (response.ok && result.statusCode === 200) {
-            const trucks = JSON.parse(result.body); // Parse the body to get the array
-            console.log("Trucks data:", trucks); // Log the parsed trucks data
+            let trucks;
+            try {
+                trucks = JSON.parse(result.body); // Try parsing the body to get the array
+            } catch (e) {
+                console.error('Error parsing response body:', e);
+                return;
+            }
 
-            trucks.forEach(truck => {
-                console.log("Creating marker for:", truck); // Log each truck data
-                var position = [truck.Latitude, truck.Longitude];
-                
-                // Create a marker for each truck
-                L.marker(position).addTo(map)
-                    .bindPopup(truck.truckName);
-            });
+            console.log("Parsed trucks data:", trucks); // Log the parsed trucks data
+
+            if (Array.isArray(trucks)) {
+                trucks.forEach(truck => {
+                    console.log("Creating marker for:", truck); // Log each truck data
+                    var position = [truck.Latitude, truck.Longitude];
+
+                    // Create a marker for each truck
+                    L.marker(position).addTo(map)
+                        .bindPopup(truck.truckName);
+                });
+            } else {
+                console.error('Trucks data is not an array:', trucks);
+            }
         } else {
             console.error('Error fetching truck data:', result);
         }
