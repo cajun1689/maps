@@ -16,18 +16,22 @@ function initMap() {
 
 async function fetchFoodTruckLocations() {
     try {
-        const city = "casper"; // Ensure consistent casing
+        const city = "casper";
         const apiUrl = `https://ff3d4knxkd.execute-api.us-east-1.amazonaws.com/prod/recent-trucks?city=${city}`;
 
         const response = await fetch(apiUrl);
         const result = await response.json();
 
+        console.log("Response:", result); // Log the raw response
+
         if (response.ok && result.statusCode === 200) {
             const trucks = JSON.parse(result.body); // Parse the body to get the array
+            console.log("Trucks data:", trucks); // Log the parsed trucks data
 
             trucks.forEach(truck => {
+                console.log("Creating marker for:", truck); // Log each truck data
                 var position = [truck.Latitude, truck.Longitude];
-
+                
                 // Create a marker for each truck
                 L.marker(position).addTo(map)
                     .bindPopup(truck.truckName);
@@ -39,6 +43,7 @@ async function fetchFoodTruckLocations() {
         console.error('Error fetching truck data:', error);
     }
 }
+
 
 // Initialize the map when the page loads
 window.addEventListener('load', initMap);
